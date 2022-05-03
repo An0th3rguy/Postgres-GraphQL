@@ -1,0 +1,19 @@
+1,Acer Nitro 5 2021,AN616-56,15.6,Intel Core i5-11300H,8,NVIDIA GeForce GTX 1650 4GB GDDE6,Full HD,SSD,512,Windows 11,Black,Gaming,1
+2,Dell Vostro 14,3400,14,Intel Core i5-1135G7,8,Intel Iris Xe Graphics,Full HD,SSD,256,Windows 10 Pro,Black,Work,2
+3,Lenovo ThinkPad T14 Gen 2,t14-g2-amd,14,AMD Ryzen 7 Pro 5850U,32, AMD Radeon Graphics,UHD 4K,SSD,1000,Windows 10 Pro,Black,Work,3
+4,ASUS TUF Dash F15,2021,15.6,Intel Core i7-11370H,16,NVIDIA GeForce RTX 3070 8GB GDDR6,Full HD,SSD,512,Windows 10 Home,Black,Gaming,4
+5,HP ProBook 450 G8,HP-450-G8,15.6,Intel Core i3-1125G4,16,Intel UHD Graphics,Full HD,SSD,512,Windows 10 Home,Silver,Work,7
+6,MSI Modern 14,B4MW-240CZ,14,AMD Ryzen 5 4500U,8,AMD Radeon Graphics,Full HD,SSD,512,Windows 10 Home,Grey,Work,8
+7,Apple MacBook Air 13,m1-2020,13,Apple M1  8-core,16,Apple M1 7-core,Retina,SSD,256,MacOS Big Sur,Grey,Travel,9
+8,Lenovo IdeaPad Gaming 3,15ACH6,15.6,AMD Ryzen 5 5600H,16,NVIDIA GeForce RTX 3050,Full HD,SSD,512,Windows 10 Pro,Black,Gaming,3
+9,Lenovo Legion 5,15IMH05H,15.6,Intel Core i5-10300H,16,NVIDIA GeForce RTX 2060 6GB GDDR6,Full HD,SSD,512,Windows 10 Pro,Black,Gaming,3
+10,ASUS 15,X515EA,15.6,Intel Core i3-1115G4,8,Intel UHD Graphics,Full HD,SSD,512,Windows 10 Home,Grey,Universal,4
+13,Lenovo IdeaPad 3,CB 11AST5,11.6,AMD A4-9120C,4,AMD Radeon Graphics,HD,SSD,64,Chrome OS,Black,Universal,3
+14,Acer Chromebook 311,CB311-9HT,11.6,Intel Celeron N4120,4,Intel UHD Graphics,HD,SSD,64,Chrome OS,Black,Universal,1
+15,HP 15s,eq1993nc,15.6,AMD 3020e,4,AMD Radeon Graphics,Full HD,SSD,128,Windows 10 S,Blue,Universal,7
+17,Acer Aspire 3,A315-34,15.6,Intel Pentium N5030,4,Intel UHD Graphics,Full HD,SSD,128,Windows 11 S,Black,Universal,1
+18,ASUS VivoBook 14,X413,14,Intel Core i3 3 GHz,4,Intel UHD Graphics,Full HD,SSD,256,Windows 10 Home,Black,Travel,4
+19,Lenovo IdeaPad Flex 5,CB 13ITL6,13.3,Intel Celeron 6305,4,Intel UHD Graphics,Full HD,eMMC,64,Chrome OS,Blue,Travel,3
+20,Acer Swift 1,SF114-34,14,Intel Pentium N6000,8,Intel UHD Graphics,Full HD,SSD,256,Windows 11 Home,Silver,Travel,1
+21,ASUS ROG Zephyrus G15,GA503,15.6,AMD Ryzen 9 5900HS,16,NVIDIA GeForce RTX 3080 8GB GDDR6,Full HD,SSD,512,Windows 10 Pro,Black,Gaming,4
+22,Dell Alienware x15,R2,15.6,Intel Core i7-12700H,16,NVIDIA GeForce RTX 3060 6GB GDDR6,Full HD,SSD,512,Windows 10 Pro,Black,Gaming,2
