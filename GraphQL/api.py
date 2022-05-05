@@ -94,6 +94,7 @@ class QueryGQL(graphene.ObjectType):
 
     notebook = graphene.Field(NotebookGQL, id = graphene.ID(required = True))
     brand = graphene.Field(BrandGQL, id = graphene.ID(required = True))
+    # notebookAll = graphene.List(NotebookGQL, id = graphene.ID(required = False))
     
     def resolve_notebook(root, info, id):
         session = extractSession(info)
@@ -104,6 +105,13 @@ class QueryGQL(graphene.ObjectType):
         session = extractSession(info)
         result = session.query(models.BrandModel).filter(models.BrandModel.id==id).first()
         return result
+
+    # def resolve_notebookAll(root, info, id):
+    #     session = extractSession(info)
+    #     #result = session.query(models.NotebookModel).filter(models.NotebookModel.id==id).first()
+    #     result = session.query(models.NotebookModel)
+    #     return result   
+  
 
 dbSessionData = {}
 

@@ -6,9 +6,9 @@ from sqlalchemy.orm import relationship
 
 from sqlalchemy_utils.functions import database_exists, create_database
 
-# _________________________________
+# ###########################
 # First Create a database
-# _________________________________
+# ###########################
 
 connectionstring = 'postgresql+psycopg2://postgres:example@localhost/database99'
 
@@ -23,9 +23,10 @@ if not database_exists(connectionstring):  # => False
 else:
     print('Database already exists')
 
-# _________________________________
+
+# ##################################
 # Create engine a define structure
-# _________________________________
+# ##################################
 
 
 from sqlalchemy import create_engine
@@ -43,15 +44,6 @@ import datetime
 from sqlalchemy import Column, String, BigInteger, Integer, DateTime, ForeignKey, Sequence, Table
 from sqlalchemy.orm import relationship
 
-
-# Notebook_Vendor = Table('NotebookVendor', BaseModel.metadata,
-#                        Column('id', BigInteger, Sequence('all_id_seq'), primary_key=True),
-#                        Column('notebook_id', ForeignKey('Notebook.id'), primary_key=True),
-#                        Column('vendor_id', ForeignKey('Vendors.id'), primary_key=True),
-#                        Column('stock', String),
-#                        Column('quantity', Integer),
-#                        Column('price', String)
-#                        )
 
 unitedSequence = Sequence('all_id_seq')
 
@@ -90,9 +82,7 @@ class NotebookModel(BaseModel):
     brand = relationship("BrandModel", back_populates='notebooks')
 
     lastchange = Column(DateTime, default=datetime.datetime.now)
-    # externalId = Column(BigInteger, index=True)
 
-    # Vendors = relationship('Vendor', secondary=Notebook_Vendor, back_populates='Notebook')
     vendors = relationship('NotebookVendorModel', back_populates = 'notebooks')
 
 
@@ -109,14 +99,7 @@ class VendorModel(BaseModel):
     score = Column(String)
 
     lastchange = Column(DateTime, default=datetime.datetime.now)
-    # entryYearId = Column(Integer)
 
-    #externalId = Column(String, index=True)
-
-    # grouptype_id = Column(ForeignKey('grouptypes.id'))
-    # grouptype = relationship('GroupTypeModel', back_populates='groups')
-
-    # Notebook = relationship('Notebook', secondary=Notebook_Vendor, back_populates='Vendors')
     notebooks = relationship('NotebookVendorModel', back_populates = 'vendors')
 
 
@@ -132,20 +115,18 @@ class BrandModel(BaseModel):
     notebooks = relationship("NotebookModel", back_populates='brand')
 
 
-    # groups = relationship('GroupModel', back_populates='grouptype')
-
-
 #BaseModel.metadata.drop_all(engine)
 BaseModel.metadata.create_all(engine)
-
-
-
 
 from sqlalchemy.orm import sessionmaker
 
 SessionMaker = sessionmaker(bind=engine)
 session = SessionMaker()
 
+
+# ###########################
+# CRUD operations
+# ###########################
 
 
 def crudNotebookCreate(db: SessionMaker, notebook):
@@ -176,6 +157,10 @@ def crudNotebook_VendorCreate(db: SessionMaker, notebook_vendor):
     db.refresh(NotebookVendorRow)
     return NotebookVendorRow
 
+
+# ###########################
+# Parsing from file
+# ###########################
 
 
 with open("init_database/data/Vendor.txt","r") as file:
@@ -209,7 +194,4 @@ with open("init_database/data/Notebook-Prodejce.txt","r") as file:
         
 
 session = SessionMaker()
-# PopulateUsers(10)
 session.close()
-
-#error je potřeba udělat nejdriv tabulky prodejce a vyrobce nez pridam FK
