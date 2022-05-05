@@ -41,22 +41,6 @@ from sqlalchemy_utils.functions import database_exists, create_database
 #         servers[port] = _api_process
 
 
-connectionstring = 'postgresql+psycopg2://postgres:example@localhost/newdatabase'
-
-if not database_exists(connectionstring):  # => False
-    try:
-        create_database(connectionstring)
-        doCreateAll = True
-        print('Database created')
-    except Exception as e:
-        print('Database does not exists and cannot be created')
-        raise
-else:
-    print('Database already exists')
-
-
-
-
 BaseModel = declarative_base()
 
 unitedSequence = Sequence('all_id_seq')

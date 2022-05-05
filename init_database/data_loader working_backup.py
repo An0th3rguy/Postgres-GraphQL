@@ -55,22 +55,22 @@ from sqlalchemy.orm import relationship
 
 unitedSequence = Sequence('all_id_seq')
 
-class NotebookVendorModel(BaseModel):
-    __tablename__ = 'notebook_vendors'
+class Notebook_Vendor(BaseModel):
+    __tablename__ = 'NotebookVendor'
     id = Column(BigInteger, Sequence('all_id_seq'), primary_key=True)
-    notebook_id = Column(ForeignKey('notebooks.id'), primary_key=True)
-    vendor_id = Column(ForeignKey('vendors.id'), primary_key=True)
+    notebook_id = Column(ForeignKey('Notebook.id'), primary_key=True)
+    vendor_id = Column(ForeignKey('Vendors.id'), primary_key=True)
     stock = Column(String)
     quantity = Column(String)
     price = Column(String)
 
 
-    vendors = relationship('VendorModel', back_populates='notebooks')
-    notebooks = relationship('NotebookModel', back_populates='vendors')
+    vendors = relationship('Vendor', back_populates='notebooks')
+    notebook = relationship('Notebook', back_populates='vendors')
 
 
-class NotebookModel(BaseModel):
-    __tablename__ = 'notebooks'
+class Notebook(BaseModel):
+    __tablename__ = 'Notebook'
 
     id = Column(BigInteger, Sequence('all_id_seq'), primary_key=True)
     model = Column(String)
@@ -86,18 +86,18 @@ class NotebookModel(BaseModel):
     color = Column(String)
     usage = Column(String)
 
-    brand_id = Column(BigInteger, ForeignKey('brands.id'))
-    brand = relationship("BrandModel", back_populates='notebooks')
+    brand_id = Column(Integer, ForeignKey('Brands.id'))
+    brands = relationship("Brand", back_populates='notebooks02')
 
     lastchange = Column(DateTime, default=datetime.datetime.now)
     # externalId = Column(BigInteger, index=True)
 
     # Vendors = relationship('Vendor', secondary=Notebook_Vendor, back_populates='Notebook')
-    vendors = relationship('NotebookVendorModel', back_populates = 'notebooks')
+    vendors = relationship('Notebook_Vendor', back_populates = 'notebook')
 
 
-class VendorModel(BaseModel):
-    __tablename__ = 'vendors'
+class Vendor(BaseModel):
+    __tablename__ = 'Vendors'
 
     id = Column(BigInteger, Sequence('all_id_seq'), primary_key=True)
     name = Column(String)
@@ -117,11 +117,11 @@ class VendorModel(BaseModel):
     # grouptype = relationship('GroupTypeModel', back_populates='groups')
 
     # Notebook = relationship('Notebook', secondary=Notebook_Vendor, back_populates='Vendors')
-    notebooks = relationship('NotebookVendorModel', back_populates = 'vendors')
+    notebooks = relationship('Notebook_Vendor', back_populates = 'vendors')
 
 
-class BrandModel(BaseModel):
-    __tablename__ = 'brands'
+class Brand(BaseModel):
+    __tablename__ = 'Brands'
 
     id = Column(BigInteger, Sequence('all_id_seq'), primary_key=True)
     name = Column(String)
@@ -129,7 +129,7 @@ class BrandModel(BaseModel):
     established = Column(String)
     web = Column(String)
 
-    notebooks = relationship("NotebookModel", back_populates='brand')
+    notebooks02 = relationship("Notebook", back_populates='brands')
 
 
     # groups = relationship('GroupModel', back_populates='grouptype')
@@ -149,28 +149,28 @@ session = SessionMaker()
 
 
 def crudNotebookCreate(db: SessionMaker, notebook):
-    NotebookRow = NotebookModel(id=notebook.id, name=notebook.name, model = notebook.model, size=notebook.size, cpu=notebook.cpu, ram=notebook.ram, gpu=notebook.gpu, resolution=notebook.resolution, storage_type=notebook.storage_type, storage_size=notebook.storage_size, os=notebook.os, color=notebook.color, usage=notebook.usage, brand_id=notebook.brand_id)
+    NotebookRow = Notebook(id=notebook.id, name=notebook.name, model = notebook.model, size=notebook.size, cpu=notebook.cpu, ram=notebook.ram, gpu=notebook.gpu, resolution=notebook.resolution, storage_type=notebook.storage_type, storage_size=notebook.storage_size, os=notebook.os, color=notebook.color, usage=notebook.usage, brand_id=notebook.brand_id)
     db.add(NotebookRow)
     db.commit()
     db.refresh(NotebookRow)
     return NotebookRow
 
 def crudBrandCreate(db: SessionMaker, brand):
-    BrandRow = BrandModel(id=brand.id, name=brand.name, headquarter = brand.headquarter, established=brand.established, web=brand.web)
+    BrandRow = Brand(id=brand.id, name=brand.name, headquarter = brand.headquarter, established=brand.established, web=brand.web)
     db.add(BrandRow)
     db.commit()
     db.refresh(BrandRow)
     return BrandRow
 
 def crudVendorCreate(db: SessionMaker, vendor):
-    VendorRow = VendorModel(id=vendor.id, name=vendor.name, address = vendor.address, telephone=vendor.telephone, ico=vendor.ico, web=vendor.web, email=vendor.email, score=vendor.score)
+    VendorRow = Vendor(id=vendor.id, name=vendor.name, address = vendor.address, telephone=vendor.telephone, ico=vendor.ico, web=vendor.web, email=vendor.email, score=vendor.score)
     db.add(VendorRow)
     db.commit()
     db.refresh(VendorRow)
     return VendorRow
 
 def crudNotebook_VendorCreate(db: SessionMaker, notebook_vendor):
-    NotebookVendorRow = NotebookVendorModel(notebook_id=notebook_vendor.notebook_id, vendor_id = notebook_vendor.vendor_id, stock=notebook_vendor.stock, quantity=notebook_vendor.quantity, price=notebook_vendor.price)
+    NotebookVendorRow = Notebook_Vendor(notebook_id=notebook_vendor.notebook_id, vendor_id = notebook_vendor.vendor_id, stock=notebook_vendor.stock, quantity=notebook_vendor.quantity, price=notebook_vendor.price)
     db.add(NotebookVendorRow)
     db.commit()
     db.refresh(NotebookVendorRow)
@@ -182,14 +182,14 @@ with open("init_database/data/Vendor.txt","r") as file:
     for line in file:
         id, name, address, telephone, ico, web, email, score = line.strip().split(",")
         data = {'id': f'{id}', 'name': f'{name}', 'address': f'{address}', 'telephone': f'{telephone}', 'ico': f'{ico}', 'web': f'{web}', 'email': f'{email}', 'score': f'{score}'}
-        crudVendorCreate(db=session, vendor=VendorModel(**data))
+        crudVendorCreate(db=session, vendor=Vendor(**data))
         print(data)
 
 with open("init_database/data/Brand.txt","r") as file:
     for line in file:
         id, name, headquarter, established, web = line.strip().split(",")
         data = {'id': f'{id}', 'name': f'{name}', 'headquarter': f'{headquarter}', 'established': f'{established}', 'web': f'{web}'}
-        crudBrandCreate(db=session, brand=BrandModel(**data))
+        crudBrandCreate(db=session, brand=Brand(**data))
         print(data)
 
 with open("init_database/data/Notebook.txt","r") as file:
@@ -197,7 +197,7 @@ with open("init_database/data/Notebook.txt","r") as file:
         id, name, model, size, cpu, ram, gpu, resolution, storage_type, storage_size, os, color, usage, brand_id = line.strip().split(",")
         data = {'id': f'{id}','name': f'{name}', 'model': f'{model}', 'size': f'{size}', 'cpu': f'{cpu}', 'ram': f'{ram}', 'gpu': f'{gpu}', 'resolution': f'{resolution}', 'storage_type': f'{storage_type}', 'storage_size': f'{storage_size}', 'os': f'{os}','color': f'{color}','usage': f'{usage}','brand_id': f'{brand_id}'}
         print(data)
-        crudNotebookCreate(db=session, notebook=NotebookModel(**data))
+        crudNotebookCreate(db=session, notebook=Notebook(**data))
 
 with open("init_database/data/Notebook-Prodejce.txt","r") as file:
     for line in file:
@@ -205,7 +205,7 @@ with open("init_database/data/Notebook-Prodejce.txt","r") as file:
         price = f"{(float(price) / 23.5):.0f}" #czk to usd
         data = {'notebook_id': f'{notebook_id}', 'vendor_id': f'{vendor_id}', 'stock': f'{stock}', 'quantity': f'{quantity}', 'price': f'{price}'}
         print(data)
-        crudNotebook_VendorCreate(db=session, notebook_vendor=NotebookVendorModel(**data))
+        crudNotebook_VendorCreate(db=session, notebook_vendor=Notebook_Vendor(**data))
         
 
 session = SessionMaker()
