@@ -1,0 +1,108 @@
+import graphene
+
+class CreateNotebookVendorInput(graphene.InputObjectType):
+
+    notebook_id = graphene.ID(required=False)
+    vendor_id = graphene.ID(required=False)
+    stock = graphene.String(required=False)
+    quantity = graphene.String(required=False)
+    price = graphene.String(required=False)
+    
+    def asDict(self):
+        return {
+            'notebook_id': self.notebook_id,
+            'vendor_id': self.vendor_id,
+            'stock': self.stock,
+            'quantity': self.quantity,
+            'price': self.price
+        }
+
+class CreateNotebookVendorGQL(graphene.Mutation):
+    class Arguments:
+        notebookVendor = CreateNotebookVendorInput(required = True)
+    
+    ok = graphene.Boolean()
+    result = graphene.Field(NotebookVendorGQL)
+    
+    def mutate(parent, info, notebookVendor):
+        session = extractSession(info)
+        notebookVendorDict = notebookVendor.asDict()
+        notebookVendorRow = NotebookVendorModel(**notebookVendorDict)
+        session.add(notebookVendorRow)
+        session.commit()
+        session.refresh(notebookVendorRow)
+        return CreateNotebookVendorGQL(ok=True, result=notebookVendorRow)
+    pass
+
+
+class UpdateNotebookVendorInput(graphene.InputObjectType):
+    
+    id = graphene.ID(required=True)
+    notebook_id = graphene.ID(required=False)
+    vendor_id = graphene.ID(required=False)
+    stock = graphene.String(required=False)
+    quantity = graphene.String(required=False)
+    price = graphene.String(required=False)
+    
+    def asDict(self):
+        return {
+            'notebook_id': self.notebook_id,
+            'vendor_id': self.vendor_id,
+            'stock': self.stock,
+            'quantity': self.quantity,
+            'price': self.price
+        }
+    
+class UpdateNotebookVendorGQL(graphene.Mutation):
+    class Arguments:
+        notebookVendor = UpdateNotebookVendorInput(required = True)
+    
+    ok = graphene.Boolean()
+    result = graphene.Field(NotebookVendorGQL)
+    
+    def mutate(parent, info, notebokVendor):
+        session = extractSession(info)
+        notebookVendorDict = notebokVendor.asDict()
+        notebookVendorRow = session.query(NotebookVendorModel).filter(NotebookVendorModel.id==notebokVendor.id).first()
+        if 'notebook_id' in notebookVendorDict and notebookVendorDict['notebook_id'] != None:
+            notebookVendorRow.notebook_id = notebookVendorDict['notebook_id']
+        if 'vendor_id' in notebookVendorDict and notebookVendorDict['vendor_id'] != None:
+            notebookVendorRow.vendor_id = notebookVendorDict['vendor_id']
+        if 'stock' in notebookVendorDict and notebookVendorDict['stock'] != None:
+            notebookVendorRow.stock = notebookVendorDict['stock']
+        if 'quantity' in notebookVendorDict and notebookVendorDict['quantity'] != None:
+            notebookVendorRow.quantity = notebookVendorDict['quantity']
+        if 'price' in notebookVendorDict and notebookVendorDict['price'] != None:
+            notebookVendorRow.price = notebookVendorDict['price']
+        
+        # session.delete(vendorRow)
+        session.commit()     
+        session.refresh(notebookVendorRow)
+        return CreateNotebookVendorGQL(ok=True, result=notebookVendorRow)
+    pass
+
+class DeleteNotebookVendorInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    
+    def asDict(self):
+        return {
+            'id': self.id
+        }
+
+class DeleteNotebookVendorGQL(graphene.Mutation):
+   
+    class Arguments:
+        notebookVendor = DeleteNotebookVendorInput(required = True)
+
+    ok = graphene.Boolean()
+    result = graphene.Field(NotebookVendorGQL)
+
+    def mutate(parent, info, notebookVendor):
+        session = extractSession(info)
+        notebookVendorDict = notebookVendor.asDict()
+        notebookVendorRow = session.query(NotebookVendorModel).filter(NotebookVendorModel.id==notebookVendor.id).first()
+        
+        session.delete(notebookVendorRow)
+        session.commit()     
+        return CreateNotebookVendorGQL(ok=True, result=notebookVendorRow)
+    pass

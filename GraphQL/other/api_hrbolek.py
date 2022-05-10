@@ -166,6 +166,86 @@ class QueryGQL(graphene.ObjectType):
         result = session.query(GroupTypeModel).filter(GroupTypeModel.id==id).first()
         return result
 
+
+
+
+
+
+import graphene
+
+class CreateUserInput(graphene.InputObjectType):
+    name = graphene.String(required=False)
+    surname = graphene.String(required=False)
+    email = graphene.String(required=False)
+    
+    def asDict(self):
+        return {
+            'name': self.name,
+            'surname': self.surname,
+            'email': self.email
+        }
+    
+class CreateUserGQL(graphene.Mutation):
+    class Arguments:
+        user = CreateUserInput(required = True)
+    
+    ok = graphene.Boolean()
+    result = graphene.Field(UserGQL)
+    
+    def mutate(parent, info, user):
+        session = extractSession(info)
+        userDict = user.asDict()
+        userRow = UserModel(**userDict)
+        session.add(userRow)
+        session.commit()
+        session.refresh(userRow)
+        return CreateUserGQL(ok=True, result=userRow)
+    pass
+
+class UpdateUserInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String(required=False)
+    surname = graphene.String(required=False)
+    email = graphene.String(required=False)
+    
+    def asDict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'surname': self.surname,
+            'email': self.email
+        }
+    
+class UpdateUserGQL(graphene.Mutation):
+    class Arguments:
+        user = UpdateUserInput(required = True)
+    
+    ok = graphene.Boolean()
+    result = graphene.Field(UserGQL)
+    
+    def mutate(parent, info, user):
+        session = extractSession(info)
+        userDict = user.asDict()
+        userRow = session.query(UserModel).filter(UserModel.id==user.id).first()
+        if 'name' in userDict and userDict['name'] != None:
+            userRow.name = userDict['name']
+        if 'surname' in userDict and userDict['surname'] != None:
+            userRow.surname = userDict['surname']
+        if 'email' in userDict and userDict['email'] != None:
+            userRow.email = userDict['email']
+        # session.add(userDict)
+        session.commit()
+        session.refresh(userRow)
+        return CreateUserGQL(ok=True, result=userRow)
+    pass
+
+
+class Mutations(graphene.ObjectType):
+    create_user = CreateUserGQL.Field()
+    update_user = UpdateUserGQL.Field()
+
+
+
 dbSessionData = {}
 
 def defineStartupAndShutdown(app, SessionMaker):
@@ -192,7 +272,7 @@ import graphene
 from fastapi import FastAPI
 
 graphql_app = GraphQLApp(
-    schema=graphene.Schema(query=QueryGQL), 
+    schema=graphene.Schema(query=QueryGQL, mutation=Mutations), 
     on_get=make_graphiql_handler())
 
 app = FastAPI()#root_path='/api')

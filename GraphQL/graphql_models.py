@@ -1,19 +1,7 @@
-import uvicorn
 import graphene
 
-from starlette_graphene3 import GraphQLApp, make_graphiql_handler
-from fastapi import FastAPI
-from sqlalchemy.orm import sessionmaker
-
-# importing SQLalchemy models
-import models
-
-
-SessionMaker = sessionmaker(bind=models.engine)
-session = SessionMaker()
-
 # ###########################
-# GraphQL
+# GraphQL MODELS
 # ###########################
 
 class NotebookVendorGQL(graphene.ObjectType):
@@ -104,69 +92,3 @@ class BrandGQL(graphene.ObjectType):
     
     def resolve_notebooks(parent, info):
         return parent.notebooks
-
-
-class QueryGQL(graphene.ObjectType):
-
-    notebook = graphene.Field(NotebookGQL, id = graphene.ID(required = True))
-    vendor = graphene.Field(VendorGQL, id = graphene.ID(required = True))
-    brand = graphene.Field(BrandGQL, id = graphene.ID(required = True))
-    # notebookAll = graphene.List(NotebookGQL, id = graphene.ID(required = False))
-    
-    def resolve_notebook(root, info, id):
-        session = extractSession(info)
-        result = session.query(models.NotebookModel).filter(models.NotebookModel.id==id).first()
-        return result
-    
-    def resolve_vendor(root, info, id):
-        session = extractSession(info)
-        result = session.query(models.VendorModel).filter(models.VendorModel.id==id).first()
-        return result
-
-    def resolve_brand(root, info, id):
-        session = extractSession(info)
-        result = session.query(models.BrandModel).filter(models.BrandModel.id==id).first()
-        return result
-
-    # def resolve_notebookAll(root, info, id):
-    #     session = extractSession(info)
-    #     #result = session.query(models.NotebookModel).filter(models.NotebookModel.id==id).first()
-    #     result = session.query(models.NotebookModel)
-    #     return result   
-  
-
-dbSessionData = {}
-
-def defineStartupAndShutdown(app, SessionMaker):
-    @app.on_event("startup")
-    async def startup_event():
-        session = SessionMaker()
-        dbSessionData['session'] = session
-
-    @app.on_event("shutdown")
-    def shutdown_event():
-        session = dbSessionData.get('session', None)
-        if not session is None:
-            session.close()
-
-def extractSession(info):
-    session = dbSessionData.get('session', None)
-    assert not session is None, 'session is not awailable'
-    return session
-
-
-# ###########################
-# Fast API
-# ###########################
-
-graphql_app = GraphQLApp(
-    schema=graphene.Schema(query=QueryGQL), 
-    on_get=make_graphiql_handler())
-
-app = FastAPI()#root_path='/api')
-
-defineStartupAndShutdown(app, SessionMaker)
-
-app.add_route('/gql/', graphql_app)
-# start_api(app=app, port=9992, runNew=True)
-uvicorn.run(app, port=9992, host='0.0.0.0', root_path='')

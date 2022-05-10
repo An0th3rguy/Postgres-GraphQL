@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
 # ###########################
-# SQLalchemy models
+# SQLalchemy MODELS
 # ###########################
 
 BaseModel = declarative_base()
@@ -92,14 +92,4 @@ class BrandModel(BaseModel):
     web = Column(String)
 
     notebooks = relationship("NotebookModel", back_populates='brand')
-
-# ###########################
-# Connection string
-# ###########################
-
-connectionstring = 'postgresql+psycopg2://postgres:example@localhost/database99'
-engine = create_engine(connectionstring) 
-
-#BaseModel.metadata.drop_all(engine)
-BaseModel.metadata.create_all(engine)
 
