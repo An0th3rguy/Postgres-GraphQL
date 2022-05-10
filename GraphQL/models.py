@@ -15,15 +15,21 @@ unitedSequence = Sequence('all_id_seq')
 class NotebookVendorModel(BaseModel):
     __tablename__ = 'notebook_vendors'
     id = Column(BigInteger, Sequence('all_id_seq'), primary_key=True)
-    notebook_id = Column(ForeignKey('notebooks.id'), primary_key=True)
-    vendor_id = Column(ForeignKey('vendors.id'), primary_key=True)
+    notebook_id = Column(BigInteger, ForeignKey('notebooks.id'), primary_key=True)
+    vendor_id = Column(BigInteger, ForeignKey('vendors.id'), primary_key=True)
     stock = Column(String)
     quantity = Column(String)
     price = Column(String)
 
+    # works
+    # vendors = relationship('VendorModel', back_populates='notebooks')
+    # notebooks = relationship('NotebookModel', back_populates='vendors')
 
-    vendors = relationship('VendorModel', back_populates='notebooks')
-    notebooks = relationship('NotebookModel', back_populates='vendors')
+    # vendors = relationship("VendorModel", backref="notebooks_notebook_vendors")
+    # notebooks = relationship("NotebookModel", backref="vendors_notebook_vendors")
+
+    notebook = relationship("NotebookModel", back_populates='prices')
+    vendor = relationship("VendorModel", back_populates="products")
 
 
 class NotebookModel(BaseModel):
@@ -48,8 +54,13 @@ class NotebookModel(BaseModel):
 
     lastchange = Column(DateTime, default=datetime.datetime.now)
 
+    prices = relationship("NotebookVendorModel", back_populates="notebook")
 
-    vendors = relationship('NotebookVendorModel', back_populates = 'notebooks')
+    # works
+    # vendors = relationship('NotebookVendorModel', back_populates = 'notebooks')
+
+    # vendors = relationship("VendorModel", secondary="notebook_vendors")
+    
 
 
 class VendorModel(BaseModel):
@@ -66,7 +77,9 @@ class VendorModel(BaseModel):
 
     lastchange = Column(DateTime, default=datetime.datetime.now)
 
-    notebooks = relationship('NotebookVendorModel', back_populates = 'vendors')
+    products = relationship("NotebookVendorModel", back_populates="vendor")
+    # works
+    # notebooks = relationship('NotebookVendorModel', back_populates = 'vendors')
 
 
 class BrandModel(BaseModel):
