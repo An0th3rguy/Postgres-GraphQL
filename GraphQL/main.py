@@ -7,6 +7,9 @@ from session import SessionMaker, defineStartupAndShutdown
 from queries import QueryGQL
 from mutations import Mutations
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 # ###########################
 # Fast API
 # ###########################
@@ -16,6 +19,22 @@ graphql_app = GraphQLApp(
     on_get=make_graphiql_handler())
 
 app = FastAPI()#root_path='/api')
+
+# we are not using it while working with localhost
+origins = [
+    "http://enable-ip-to-get-connection.com",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], #enable all origins to get it work with localhost, otherwise CORS ERROR
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+    max_age=3600,
+)
+
 
 defineStartupAndShutdown(app, SessionMaker)
 
