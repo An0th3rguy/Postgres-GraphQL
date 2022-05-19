@@ -1,9 +1,23 @@
+function getInputValue() {
+  let inputVal = document.getElementById("notebook_id").value;
+  return inputVal
+}
+
+function clearcontent(elementID) {
+  const inputField = document.getElementById("wrapper4");
+  const btn = document.getElementById("notebook_id");
+
+    btn.addEventListener('click',()=>{
+      // clearing the input field
+      inputField.value = " ";
+  })
+
+}
 
 
 function DisplayTable(query, columns, id, type)
 
 {
-
 
 new gridjs.Grid({
 
@@ -51,9 +65,12 @@ new gridjs.Grid({
         return data.data.vendorAll
       else if(type == "ShowAllNotebooks")
         return data.data.notebookAll
-      // match = [data.data.notebook]
-      // console.log(match)
-      // return match
+        else if(type == "ShowAllBrands")
+        return data.data.brandAll
+      else if(type == "ShowPrices")
+        return data.data.notebook.prices.map(object => [object.vendor.id, object.vendor.name, object.quantity, object.price, object.vendor.score])
+      
+      
     }),
 
     handle: (res) => {
@@ -72,8 +89,12 @@ new gridjs.Grid({
 
 }
 
-document.getElementById("wrapper").innerHTML = DisplayTable(`query{notebookAll{id,name,model }}`, ["id","name","model"], "wrapper","ShowAllNotebooks")
-document.getElementById("wrapper").innerHTML = DisplayTable(`query{vendorAll{id,name,address }}`, ["id","name","address"], "wrapper2", "ShowAllVendors")
+DisplayTable(`query{notebookAll{id,name,model }}`, ["id","name","model"], "wrapper","ShowAllNotebooks")
+DisplayTable(`query{vendorAll{id,name,address }}`, ["id","name","address"], "wrapper2", "ShowAllVendors")
+DisplayTable(`query{brandAll{id,name,headquarter }}`, ["id","name","headquarter"], "wrapper3", "ShowAllBrands")
+
+// DisplayTable(`query{notebook(id:10){id,name, prices{price, vendor{id, name}} }}`, ["name","price"], "wrapper3", "ShowPricesAdvanced")
+// DisplayTable(`query{notebook(id:10){id,name, prices{price, quantity, vendor{id, name, score}} }}`, ["vendor id","vendor", "quantity","price","rating"], "wrapper4", "ShowPrices")
 
 
 

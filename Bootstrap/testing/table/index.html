@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JSON Grid</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@araujoigor/json-grid/dist/json-grid.css">
+  <script src="https://unpkg.com/@araujoigor/json-grid/dist/JSONGrid.min.js"></script>
+</head>
+
+<body>
+    <div id="demo"></div>
+    <div id="container"></div>
+  <script>
+
+
+
+function showGraphQLData(){
+  const query = `
+      query {
+          notebook(id:1) {
+              id,
+              name,
+              model
+          }
+      }
+  `;
+
+
+
+  fetch("http://localhost:9992/gql/", {
+      method: "POST",
+      headers: {
+      
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+      },
+      body: JSON.stringify({
+          query
+      })
+  }).then(response => {
+      return response.json();
+  }).then(data => {
+      fetchedData(data)
+  });
+
+  // fetchedData = (apiData) => {
+  //     console.log(apiData)
+  // }
+
+  fetchedData = (apiData) => {
+      
+      data = JSON.stringify(apiData);
+      console.log(apiData)
+      
+     
+      document.getElementById("demo").innerHTML = data;
+
+      var container = document.getElementById("container");
+        var data = {
+            apiData
+        };
+        var jsonGrid = new JSONGrid(data, container);
+        jsonGrid.render();
+  
+  };
+
+  
+
+}
+
+showGraphQLData()
+
+
+
+    
+  </script>
+</body>
+</html>
